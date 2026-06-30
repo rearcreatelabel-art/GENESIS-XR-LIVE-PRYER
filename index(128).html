@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GENESIS XR LIVE PLAYER / VIDEO 360 REAL SOUND XR</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#000;color:#f7fbff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body:before{content:"";position:fixed;inset:0;z-index:-2;background:
+radial-gradient(circle at 50% -8%,rgba(80,150,255,.38),transparent 34%),
+radial-gradient(circle at 10% 68%,rgba(255,70,190,.18),transparent 30%),
+radial-gradient(circle at 90% 70%,rgba(255,220,90,.12),transparent 28%),
+linear-gradient(180deg,#010205,#07111f 58%,#000)}
+.app{max-width:670px;margin:auto;min-height:100svh;padding:15px 15px 108px}
+.card{background:linear-gradient(180deg,rgba(17,24,39,.96),rgba(5,8,14,.98));border:1px solid rgba(255,255,255,.13);border-radius:28px;padding:18px;margin-bottom:14px;box-shadow:0 24px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.055)}
+.k{margin:0 0 8px;color:#8bdcff;font-size:10px;font-weight:950;letter-spacing:.17em}
+h1{font-size:29px;line-height:1;margin:0;letter-spacing:.035em}
+h2{font-size:14px;letter-spacing:.18em;color:#edf3ff;font-weight:500;margin:8px 0 0}
+p{color:#dce7f8;font-size:13px;line-height:1.72}
+.hero{font-size:16px;color:#fff;font-weight:900}
+.status{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(52,240,164,.25);background:rgba(52,240,164,.08);border-radius:999px;padding:10px 12px;font-size:12px;font-weight:900}
+.dot{width:10px;height:10px;border-radius:50%;background:#34f0a4;box-shadow:0 0 18px #34f0a4}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+button,label.file{border:1px solid rgba(255,255,255,.13);border-radius:18px;background:rgba(255,255,255,.055);color:#fff;font-weight:950;padding:15px 10px;text-align:center;font-size:13px}
+button{cursor:pointer}
+.primary{background:linear-gradient(135deg,rgba(52,124,255,.55),rgba(139,220,255,.20))}
+.accent{background:linear-gradient(135deg,rgba(255,80,190,.25),rgba(255,214,110,.18),rgba(139,220,255,.16))}
+.big{grid-column:1/-1;font-size:15px;letter-spacing:.08em}
+input[type=file]{display:none}
+.video-slot{position:relative;border-radius:26px;overflow:hidden;border:1px solid rgba(255,255,255,.13);background:#000;min-height:260px;display:grid;place-items:center;margin-top:12px}
+.video-slot video{width:100%;aspect-ratio:16/9;min-height:240px;object-fit:cover;background:#000}
+.video-placeholder{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;pointer-events:none;background:
+radial-gradient(circle at 50% 12%,rgba(139,220,255,.23),transparent 35%),
+linear-gradient(180deg,rgba(0,0,0,.74),rgba(0,0,0,.42))}
+.video-placeholder.hide{opacity:0;visibility:hidden}
+.video-placeholder b{display:block;font-size:18px;letter-spacing:.12em}
+.video-placeholder span{display:block;margin-top:10px;color:#8bdcff;font-size:12px;font-weight:900;letter-spacing:.12em}
+.stage{position:relative;border-radius:26px;overflow:hidden;border:1px solid rgba(255,255,255,.11);background:#02050b}
+canvas{width:100%;display:block;background:#02050b}
+.overlay{position:absolute;inset:0;display:grid;place-items:center;text-align:center;background:linear-gradient(180deg,rgba(0,0,0,.86),rgba(0,0,0,.22));transition:.55s;pointer-events:none}
+.overlay.hide{opacity:0}
+.logo{font-size:38px;font-weight:1000;letter-spacing:.13em;text-shadow:0 0 36px rgba(139,220,255,.75)}
+.sub{color:#cdd8ea;font-size:12px;letter-spacing:.19em;font-weight:900;margin-top:12px}
+.log{padding:11px 12px;border-radius:15px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#dce7f8;font-size:12px;margin-top:8px}
+.log b{color:#8bdcff}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.metric{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:11px;background:rgba(255,255,255,.035)}
+.metric span{display:block;color:#9aa7bd;font-size:10px;letter-spacing:.11em}
+.metric b{display:block;margin-top:5px;font-size:13px}
+.sliders{display:grid;gap:12px;margin-top:12px}
+.sliders label{display:grid;grid-template-columns:1fr auto;gap:8px;color:#edf3ff;font-size:13px;font-weight:850}
+.sliders input{grid-column:1/-1;width:100%;accent-color:#8bdcff}
+.xr-ring{height:152px;border:1px solid rgba(255,255,255,.1);border-radius:22px;margin-top:12px;position:relative;overflow:hidden;background:
+radial-gradient(circle at 50% 50%,rgba(139,220,255,.11),transparent 38%),
+radial-gradient(circle at 50% 50%,rgba(255,255,255,.05),transparent 65%)}
+.xr-ring:before{content:"";position:absolute;left:50%;top:50%;width:220px;height:84px;transform:translate(-50%,-50%);border:2px solid rgba(139,220,255,.25);border-radius:50%}
+.xr-ring:after{content:"LISTENER";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:10px;font-weight:950;color:#dce7f8;letter-spacing:.14em}
+.orb{position:absolute;left:50%;top:50%;width:24px;height:24px;margin:-12px;border-radius:50%;background:#fff;box-shadow:0 0 28px #8bdcff,0 0 55px rgba(139,220,255,.5)}
+.toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);background:rgba(0,0,0,.88);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:12px 16px;font-weight:950;opacity:0;transition:.22s;z-index:30;white-space:nowrap}
+.toast.show{opacity:1}
+.nav{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);width:min(640px,calc(100% - 24px));display:grid;grid-template-columns:repeat(4,1fr);gap:8px;border:1px solid rgba(255,255,255,.12);border-radius:24px;background:rgba(0,0,0,.80);backdrop-filter:blur(18px);padding:8px}
+.nav a{text-align:center;text-decoration:none;color:#aeb8ca;font-size:11px;font-weight:950;padding:11px 4px;border-radius:16px}
+.nav a:hover{background:rgba(52,124,255,.32);color:#fff}
+@media(max-width:470px){.grid{grid-template-columns:1fr}.big{grid-column:auto}.metrics{grid-template-columns:repeat(2,1fr)}h1{font-size:25px}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast">GENESIS READY</div>
+<main class="app">
+<section class="card" id="home">
+<p class="k">VIDEO 360° REAL SOUND XR UPDATE</p>
+<h1>GENESIS XR LIVE PLAYER</h1>
+<h2>GENESIS SONIC CORE</h2>
+<p class="hero">動画から流れてくる音源を、360° Real Sound XR化。</p>
+<p>動画を差し込むと、動画音声をGENESIS SONIC COREへ接続。音がリスナーの周囲を回り込むように、XR Orbit / Depth / Hallを自動付与します。</p>
+<div class="status"><i class="dot"></i><span id="status">READY</span></div>
+</section>
+
+<section class="card" id="video">
+<p class="k">VIDEO INSERT / XR SOUND SOURCE</p>
+<p class="hero">STEP 1：動画を差し込む</p>
+<div class="video-slot">
+  <video id="liveVideo" controls playsinline preload="metadata"></video>
+  <div class="video-placeholder" id="videoPlaceholder">
+    <div>
+      <b>GENESIS VIDEO SOURCE</b>
+      <span>動画音声 → 360° Real Sound XR</span>
+    </div>
+  </div>
+</div>
+<label class="file accent big">動画を差し込む / VIDEO UPLOAD
+  <input id="videoFile" type="file" accept="video/*">
+</label>
+<div class="log"><b>VIDEO AUDIO：</b><span id="videoLog">動画待機中</span></div>
+</section>
+
+<section class="card" id="xr">
+<p class="k">GENESIS 360° REAL SOUND XR</p>
+<p class="hero">STEP 2：XR音響をONにする</p>
+<div class="grid">
+<button class="primary big" id="xrStart">360° REAL SOUND XR ON</button>
+<button class="accent" id="orbitBtn">XR ORBIT AUTO</button>
+<button id="cinemaBtn">CINEMA HALL</button>
+<button id="stadiumBtn">STADIUM AIR</button>
+</div>
+<div class="xr-ring"><div class="orb" id="orb"></div></div>
+<div class="sliders">
+<label>360°回転スピード <b id="speedV">62</b><input id="speed" type="range" min="0" max="100" value="62"></label>
+<label>音の奥行き / Depth <b id="depthV">78</b><input id="depth" type="range" min="0" max="100" value="78"></label>
+<label>会場残響 / Hall <b id="hallV">54</b><input id="hall" type="range" min="0" max="100" value="54"></label>
+<label>Master <b id="masterV">86</b><input id="master" type="range" min="0" max="100" value="86"></label>
+</div>
+<div class="metrics">
+<div class="metric"><span>XR PAN</span><b id="panM">0%</b></div>
+<div class="metric"><span>DEPTH</span><b id="depthM">78%</b></div>
+<div class="metric"><span>HALL</span><b id="hallM">54%</b></div>
+<div class="metric"><span>MODE</span><b id="modeM">ORBIT</b></div>
+</div>
+</section>
+
+<section class="card" id="live">
+<p class="k">XR LIVE VISUALIZER</p>
+<div class="stage">
+<canvas id="c" width="760" height="540"></canvas>
+<div id="overlay" class="overlay"><div><div class="logo">GENESIS</div><div class="sub">360° REAL SOUND XR</div></div></div>
+</div>
+<div class="grid">
+<button class="primary big" id="liveStart">LIVE START / XR会場に入る</button>
+<button id="stop">STOP</button>
+<button id="reset">RESET</button>
+</div>
+</section>
+
+<nav class="nav"><a href="#home">HOME</a><a href="#video">VIDEO</a><a href="#xr">XR SOUND</a><a href="#live">LIVE</a></nav>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const qsa=s=>[...document.querySelectorAll(s)];
+const toast=m=>{const t=$("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1400);if(navigator.vibrate)navigator.vibrate(18)};
+const video=$("liveVideo"),canvas=$("c"),ctx=canvas.getContext("2d");
+let ac,src,splitter,merger,preGain,master,dryGain,wetGain,delayL,delayR,feedbackL,feedbackR,filter,analyser,panner;
+let videoUrl=null,videoReady=false,xrReady=false,orbitOn=true,mode="ORBIT",t0=performance.now();
+let data=new Uint8Array(128);
+let settings={speed:62,depth:78,hall:54,master:86};
+async function initAudio(){
+  if(ac) return;
+  ac=new(window.AudioContext||window.webkitAudioContext)();
+  analyser=ac.createAnalyser(); analyser.fftSize=256;
+  preGain=ac.createGain(); dryGain=ac.createGain(); wetGain=ac.createGain(); master=ac.createGain();
+  delayL=ac.createDelay(1.0); delayR=ac.createDelay(1.0);
+  feedbackL=ac.createGain(); feedbackR=ac.createGain();
+  filter=ac.createBiquadFilter(); filter.type="lowpass"; filter.frequency.value=5200;
+  if(ac.createStereoPanner){ panner=ac.createStereoPanner(); } else { panner=null; }
+  src=ac.createMediaElementSource(video);
+  src.connect(preGain);
+  if(panner){ preGain.connect(panner); panner.connect(dryGain); } else { preGain.connect(dryGain); }
+  dryGain.connect(master);
+  preGain.connect(delayL); preGain.connect(delayR);
+  delayL.connect(feedbackL); feedbackL.connect(delayR);
+  delayR.connect(feedbackR); feedbackR.connect(delayL);
+  delayL.connect(filter); delayR.connect(filter); filter.connect(wetGain); wetGain.connect(master);
+  master.connect(analyser); analyser.connect(ac.destination);
+  applySettings();
+}
+function applySettings(){
+  $("speedV").textContent=settings.speed; $("depthV").textContent=settings.depth; $("hallV").textContent=settings.hall; $("masterV").textContent=settings.master;
+  $("depthM").textContent=settings.depth+"%"; $("hallM").textContent=settings.hall+"%"; $("modeM").textContent=mode;
+  if(!ac) return;
+  master.gain.value=settings.master/100;
+  dryGain.gain.value=0.88;
+  wetGain.gain.value=(settings.hall/100)*0.48;
+  delayL.delayTime.value=0.018+(settings.depth/100)*0.15;
+  delayR.delayTime.value=0.030+(settings.depth/100)*0.21;
+  feedbackL.gain.value=(settings.hall/100)*0.32;
+  feedbackR.gain.value=(settings.hall/100)*0.28;
+}
+["speed","depth","hall","master"].forEach(id=>{
+  $(id).oninput=()=>{settings[id]=+$(id).value;applySettings();}
+});
+$("videoFile").onchange=e=>{
+  const f=e.target.files&&e.target.files[0]; if(!f)return;
+  if(videoUrl)URL.revokeObjectURL(videoUrl);
+  videoUrl=URL.createObjectURL(f);
+  video.src=videoUrl; video.load();
+  $("videoPlaceholder").classList.add("hide");
+  $("videoLog").textContent="動画読み込み完了："+f.name;
+  $("status").textContent="VIDEO READY";
+  videoReady=true;
+  toast("VIDEO READY");
+};
+$("xrStart").onclick=async()=>{
+  if(!videoReady){toast("先に動画を差し込んでください");return;}
+  await initAudio(); await ac.resume();
+  xrReady=true;
+  $("status").textContent="360 XR ON";
+  $("videoLog").textContent="動画音声を360° Real Sound XRへ接続中";
+  $("xrStart").textContent="360° REAL SOUND XR ACTIVE";
+  try{await video.play();}catch(e){}
+  toast("360° REAL SOUND XR ON");
+};
+$("orbitBtn").onclick=()=>{
+  orbitOn=!orbitOn;
+  $("orbitBtn").textContent=orbitOn?"XR ORBIT AUTO":"XR ORBIT MANUAL";
+  mode=orbitOn?"ORBIT":"CENTER";
+  $("modeM").textContent=mode;
+  toast(mode);
+};
+$("cinemaBtn").onclick=()=>{mode="CINEMA";settings.depth=88;settings.hall=74;settings.speed=38;$("depth").value=88;$("hall").value=74;$("speed").value=38;applySettings();toast("CINEMA HALL");};
+$("stadiumBtn").onclick=()=>{mode="STADIUM";settings.depth=96;settings.hall=62;settings.speed=72;$("depth").value=96;$("hall").value=62;$("speed").value=72;applySettings();toast("STADIUM AIR");};
+$("liveStart").onclick=async()=>{
+  if(!videoReady){toast("先に動画を差し込んでください");return;}
+  await initAudio(); await ac.resume(); xrReady=true;
+  $("overlay").classList.add("hide");
+  $("status").textContent="XR LIVE";
+  try{await video.play();}catch(e){}
+  toast("XR LIVE START");
+};
+$("stop").onclick=()=>{video.pause();$("status").textContent="STOPPED";toast("STOPPED");};
+$("reset").onclick=()=>{video.pause();video.currentTime=0;$("overlay").classList.remove("hide");$("status").textContent="READY";toast("RESET");};
+function avg(a,s,e){let v=0;for(let i=s;i<e;i++)v+=a[i];return v/(e-s)/255}
+function draw(now){
+  requestAnimationFrame(draw);
+  let W=canvas.width,H=canvas.height,t=(now-t0)/1000;
+  if(analyser)analyser.getByteFrequencyData(data); else data.fill(32);
+  let energy=avg(data,0,128), bass=avg(data,0,22), high=avg(data,70,126);
+  let speed=(settings.speed/100)*1.75+0.15;
+  let pan=orbitOn?Math.sin(t*speed):0;
+  if(panner&&xrReady)panner.pan.value=pan*(settings.depth/100);
+  $("panM").textContent=Math.round((pan*.5+.5)*100)+"%";
+  const orb=$("orb");
+  let ox=Math.cos(t*speed)*110, oy=Math.sin(t*speed)*42;
+  orb.style.transform=`translate(${ox}px,${oy}px)`;
+  ctx.fillStyle="#02050b";ctx.fillRect(0,0,W,H);
+  let grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,"rgba(20,70,160,.44)");grad.addColorStop(1,"rgba(0,0,0,1)");ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+  for(let i=0;i<13;i++){ctx.beginPath();ctx.moveTo(W*i/12,0);ctx.lineTo(W/2+Math.sin(t+i)*220,H*.60);ctx.strokeStyle=`rgba(139,220,255,${.08+energy*.38})`;ctx.lineWidth=8+energy*26;ctx.stroke();}
+  ctx.beginPath();ctx.ellipse(W/2,H*.33,140+settings.depth*.9,42+settings.depth*.28,0,0,Math.PI*2);ctx.strokeStyle="rgba(139,220,255,.28)";ctx.lineWidth=2;ctx.stroke();
+  let sx=W/2+Math.cos(t*speed)*(140+settings.depth*.9), sy=H*.33+Math.sin(t*speed)*(42+settings.depth*.28);
+  let rg=ctx.createRadialGradient(sx,sy,2,sx,sy,31);rg.addColorStop(0,"#fff");rg.addColorStop(.35,"rgba(139,220,255,.95)");rg.addColorStop(1,"rgba(139,220,255,0)");ctx.fillStyle=rg;ctx.beginPath();ctx.arc(sx,sy,31,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="rgba(255,255,255,.08)";
+  for(let i=0;i<110;i++){ctx.beginPath();ctx.arc((i*47+t*20)%W,H*.75+(i%7)*18,2+energy*3,0,Math.PI*2);ctx.fill();}
+  ctx.fillStyle="rgba(0,0,0,.72)";ctx.fillRect(W*.16,H*.54,W*.68,62);
+  ctx.fillStyle="#fff";ctx.textAlign="center";ctx.font="900 22px system-ui";ctx.fillText("360° REAL SOUND XR",W/2,H*.59);
+  ctx.font="900 12px system-ui";ctx.fillStyle="rgba(245,248,255,.78)";ctx.fillText((mode||"ORBIT")+" / VIDEO AUDIO SOURCE",W/2,H*.64);
+  let bars=32,bw=13,gap=8,sx0=(W-bars*(bw+gap))/2,base=H-38;
+  for(let i=0;i<bars;i++){let amp=(data[Math.floor(i/bars*data.length)]||0)/255,bh=18+amp*185;ctx.fillStyle=`hsl(${205+i*5+t*18},100%,65%)`;ctx.fillRect(sx0+i*(bw+gap),base-bh,bw,bh);}
+}
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>
