@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GENESIS XR LIVE PLAYER / PUBLIC URL ONE FILE DEMO</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#000;color:#f7fbff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body:before{content:"";position:fixed;inset:0;background:
+radial-gradient(circle at 48% -10%,rgba(80,150,255,.36),transparent 34%),
+radial-gradient(circle at 12% 64%,rgba(255,70,190,.17),transparent 28%),
+radial-gradient(circle at 88% 70%,rgba(255,220,90,.11),transparent 28%),
+linear-gradient(180deg,#010205,#07111f 58%,#000);z-index:-2}
+.app{max-width:590px;margin:auto;min-height:100svh;padding:14px 14px 104px}
+.card{background:linear-gradient(180deg,rgba(17,23,36,.95),rgba(5,8,14,.97));border:1px solid rgba(255,255,255,.13);border-radius:28px;padding:18px;margin-bottom:14px;box-shadow:0 24px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.055)}
+.k{margin:0 0 8px;color:#8bdcff;font-size:10px;font-weight:950;letter-spacing:.17em}
+h1{font-size:28px;line-height:.98;margin:0;letter-spacing:.02em}
+h2{font-size:14px;letter-spacing:.19em;color:#edf3ff;font-weight:500;margin:8px 0 0}
+p{color:#dce7f8;font-size:13px;line-height:1.72}
+.hero-copy{font-size:15px;color:#f7fbff;font-weight:850;line-height:1.55;margin:14px 0 0}
+.status{display:inline-flex;gap:8px;align-items:center;border:1px solid rgba(52,240,164,.25);border-radius:999px;padding:10px 12px;background:rgba(52,240,164,.08);font-size:12px;font-weight:900}
+.dot{width:10px;height:10px;border-radius:50%;background:#34f0a4;box-shadow:0 0 18px #34f0a4}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.step{border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:12px;background:rgba(255,255,255,.035)}
+.step span{display:block;color:#8bdcff;font-size:10px;font-weight:950;letter-spacing:.12em}.step b{display:block;margin-top:7px;font-size:13px}
+.stage{position:relative;border-radius:26px;overflow:hidden;border:1px solid rgba(255,255,255,.11);background:#02050b}
+canvas{width:100%;display:block;background:#02050b}
+.overlay{position:absolute;inset:0;display:grid;place-items:center;text-align:center;background:linear-gradient(180deg,rgba(0,0,0,.86),rgba(0,0,0,.22));transition:.7s;pointer-events:none}
+.overlay.hide{opacity:0}
+.logo{font-size:38px;font-weight:1000;letter-spacing:.13em;text-shadow:0 0 36px rgba(139,220,255,.75)}
+.sub{color:#cdd8ea;font-size:12px;letter-spacing:.19em;font-weight:900;margin-top:12px}
+.actions,.scene-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+button,label.file{border:1px solid rgba(255,255,255,.13);border-radius:18px;background:rgba(255,255,255,.055);color:#f7fbff;font-weight:950;padding:14px 10px;text-align:center;font-size:13px}
+button{cursor:pointer}
+.primary{background:linear-gradient(135deg,rgba(52,124,255,.54),rgba(139,220,255,.2))}
+.accent{background:linear-gradient(135deg,rgba(255,80,190,.25),rgba(255,214,110,.18),rgba(139,220,255,.16))}
+.big{grid-column:1/-1;font-size:15px;padding:17px 12px;letter-spacing:.08em}
+.file{display:block;margin-top:10px}
+input[type=file]{display:none}
+.scene.on{background:linear-gradient(135deg,rgba(52,124,255,.54),rgba(139,220,255,.2));border-color:rgba(139,220,255,.38)}
+.console{display:grid;gap:8px;margin-top:12px}
+.log{padding:11px 12px;border-radius:15px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#dce7f8;font-size:12px}
+.log b{color:#8bdcff}
+.director{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.pill,.metric{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:11px;background:rgba(255,255,255,.035)}
+.pill span,.metric span{display:block;color:#9aa7bd;font-size:10px;letter-spacing:.11em}
+.pill b,.metric b{display:block;margin-top:5px;font-size:13px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.sliders{display:grid;gap:12px}
+.sliders label{display:grid;grid-template-columns:1fr auto;gap:8px;color:#edf3ff;font-size:13px;font-weight:850}
+.sliders input{grid-column:1/-1;width:100%;accent-color:#8bdcff}
+.toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);background:rgba(0,0,0,.88);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:12px 16px;font-weight:950;opacity:0;transition:.22s;z-index:30;white-space:nowrap}
+.toast.show{opacity:1}
+.nav{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);width:min(570px,calc(100% - 24px));display:grid;grid-template-columns:repeat(4,1fr);gap:8px;border:1px solid rgba(255,255,255,.12);border-radius:24px;background:rgba(0,0,0,.80);backdrop-filter:blur(18px);padding:8px}
+.nav a{text-align:center;text-decoration:none;color:#aeb8ca;font-size:11px;font-weight:950;padding:11px 4px;border-radius:16px}
+.nav a:hover{background:rgba(52,124,255,.32);color:#fff}
+@media(max-width:460px){.steps,.actions,.scene-grid{grid-template-columns:1fr}.big{grid-column:auto}.metrics,.director{grid-template-columns:repeat(2,1fr)}h1{font-size:25px}}
+</style>
+
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GENESIS">
+
+
+
+
+
+<style id="genesis-app-shell-style">
+#genesisSplash{
+  position:fixed;inset:0;z-index:9999;display:grid;place-items:center;text-align:center;
+  background:radial-gradient(circle at 50% 10%,rgba(80,150,255,.30),transparent 35%),linear-gradient(180deg,#000,#07111f 70%,#000);
+  color:#f7fbff;transition:opacity .7s ease,visibility .7s ease;
+}
+#genesisSplash.hide{opacity:0;visibility:hidden}
+#genesisSplash .mark{font-size:42px;font-weight:1000;letter-spacing:.13em;text-shadow:0 0 36px rgba(139,220,255,.75)}
+#genesisSplash .copy{margin-top:12px;color:#8bdcff;font-size:12px;font-weight:950;letter-spacing:.16em}
+#genesisSplash .tag{margin-top:18px;color:#dce7f8;font-size:14px;font-weight:850}
+#genesisInstallHint{
+  position:fixed;right:14px;top:14px;z-index:50;border:1px solid rgba(255,255,255,.14);border-radius:999px;
+  background:rgba(0,0,0,.72);color:#f7fbff;padding:10px 12px;font-size:11px;font-weight:950;backdrop-filter:blur(18px)
+}
+@media (display-mode: standalone){#genesisInstallHint{display:none}}
+</style>
+
+</head>
+<body>
+
+<div id="genesisSplash">
+  <div>
+    <div class="mark">GENESIS</div>
+    <div class="copy">XR LIVE PLAYER / SONIC CORE</div>
+    <div class="tag">音楽ファイルを、ライブ会場に変える。</div>
+  </div>
+</div>
+<div id="genesisInstallHint">PUBLIC URL DEMO</div>
+
+<div class="toast" id="toast">GENESIS READY</div>
+<main class="app">
+<section class="card" id="home">
+<p class="k">PUBLIC URL ONE FILE DEMO</p>
+<h1>GENESIS XR LIVE PLAYER</h1>
+<h2>GENESIS SONIC CORE</h2>
+<p class="hero-copy">音楽ファイルを、ライブ会場に変える。</p>
+<p>操作は3ステップ。音源を入れる、会場を選ぶ、LIVE START。AUTO LIVE DIRECTORは裏側で音を解析し、照明・観客・カメラ・360° Sound Orbitを自動生成します。</p>
+<div class="status"><i class="dot"></i><span id="status">READY</span></div>
+<div class="steps">
+<div class="step"><span>STEP 1</span><b>音源を入れる</b></div>
+<div class="step"><span>STEP 2</span><b>会場を選ぶ</b></div>
+<div class="step"><span>STEP 3</span><b>LIVE START</b></div>
+</div>
+</section>
+
+<section class="card" id="start">
+<p class="k">3 STEP LIVE START</p>
+<div class="actions">
+<label class="file accent big">STEP 1：音源を入れる / 自動ライブ化<input id="file" type="file" accept="audio/*,video/*"></label>
+<button class="primary" id="demoSource">DEMO音源で開始</button>
+<button id="test">SOUND TEST</button>
+</div>
+<div class="console">
+<div class="log"><b>SONIC CORE：</b><span id="sonicLog">音源待機中</span></div>
+<div class="log"><b>AUTO DIRECTOR：</b><span id="directorLog">演出生成待機中</span></div>
+<div class="log"><b>LIVE READY：</b><span id="readyLog">STEP 2で会場を選択してください</span></div>
+</div>
+</section>
+
+<section class="card" id="scene">
+<p class="k">STEP 2 / SELECT VENUE</p>
+<div class="scene-grid">
+<button class="scene on" data-scene="stadium">STADIUM<br>5万人野外</button>
+<button class="scene" data-scene="arena">ARENA<br>屋内アリーナ</button>
+<button class="scene" data-scene="cinema">CINEMA<br>映画没入</button>
+<button class="scene" data-scene="headphone">HEADPHONE<br>イヤホン没入</button>
+<button class="scene" data-scene="expo">GENESIS EXPO 2030<br>巨大XR会場</button>
+</div>
+</section>
+
+<section class="card" id="live">
+<p class="k">STEP 3 / LIVE START</p>
+<div class="stage">
+<canvas id="c" width="760" height="540"></canvas>
+<div id="overlay" class="overlay"><div><div class="logo">GENESIS</div><div class="sub">PUBLIC URL DEMO</div></div></div>
+</div>
+<div class="actions">
+<button class="primary big" id="liveStart">LIVE START / 会場に入る</button>
+<button class="accent big" id="auto">AUTO LIVE DIRECTOR ON</button>
+<button id="stop">STOP</button>
+<button id="reset">RESET</button>
+</div>
+<div class="director">
+<div class="pill"><span>DIRECTOR CUT</span><b id="cut">OPENING</b></div>
+<div class="pill"><span>CAMERA</span><b id="cam">FRONT STAGE</b></div>
+<div class="pill"><span>LIGHTING</span><b id="lightText">BLUE BEAM</b></div>
+<div class="pill"><span>VENUE</span><b id="sceneName">STADIUM</b></div>
+</div>
+<div class="metrics">
+<div class="metric"><span>ENERGY</span><b id="energy">0%</b></div>
+<div class="metric"><span>BASS</span><b id="bass">0%</b></div>
+<div class="metric"><span>HIGH</span><b id="high">0%</b></div>
+<div class="metric"><span>IMMERSION</span><b id="imm">0%</b></div>
+</div>
+</section>
+
+<section class="card" id="core">
+<p class="k">GENESIS SONIC CORE</p>
+<div class="sliders">
+<label>Auto Director 感度 <b id="sensV">74</b><input id="sens" type="range" min="0" max="100" value="74"></label>
+<label>会場奥行き <b id="depthV">82</b><input id="depth" type="range" min="0" max="100" value="82"></label>
+<label>観客の包囲感 <b id="crowdV">76</b><input id="crowdMix" type="range" min="0" max="100" value="76"></label>
+<label>Master <b id="masterV">86</b><input id="master" type="range" min="0" max="100" value="86"></label>
+</div>
+</section>
+
+<nav class="nav"><a href="#home">HOME</a><a href="#start">START</a><a href="#scene">SCENE</a><a href="#live">LIVE</a></nav>
+</main>
+<audio id="audio" preload="auto" loop></audio>
+
+<script>
+const $=id=>document.getElementById(id),qsa=s=>[...document.querySelectorAll(s)];
+const c=$("c"),ctx=c.getContext("2d"),audio=$("audio");
+let ac,analyser,master,panner,mediaSrc,noise,noiseGain,beatTimer,osc=[],srcUrl=null,start=performance.now(),live=false,autoOn=true,lastCut="",hasSource=false,demoMode=false;
+let data=new Uint8Array(128),wave=new Uint8Array(256);
+let state={scene:"stadium",sens:74,depth:82,crowd:76,master:86,boost:1,cut:"OPENING",cam:"FRONT STAGE",light:"BLUE BEAM"};
+const profiles={stadium:{label:"STADIUM",color:210,bass:1.12,laser:.9,crowd:1,fire:1},arena:{label:"ARENA",color:285,bass:.95,laser:1.35,crowd:.85,fire:.25},cinema:{label:"CINEMA",color:205,bass:.8,laser:.75,crowd:.55,fire:.15},headphone:{label:"HEADPHONE",color:170,bass:.75,laser:.8,crowd:.35,fire:.05},expo:{label:"GENESIS EXPO 2030",color:225,bass:1.3,laser:1.55,crowd:1.15,fire:1.25}};
+function toast(m){$("toast").textContent=m;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),1400);if(navigator.vibrate)navigator.vibrate(16)}
+function avg(a,s=0,e=a.length){let v=0,n=0;for(let i=s;i<e;i++){v+=a[i];n++}return n?v/n:0}
+async function init(){if(ac)return;ac=new(window.AudioContext||window.webkitAudioContext)();analyser=ac.createAnalyser();analyser.fftSize=512;master=ac.createGain();master.gain.value=state.master/100;panner=ac.createStereoPanner?ac.createStereoPanner():null;if(panner){analyser.connect(panner);panner.connect(master)}else analyser.connect(master);master.connect(ac.destination)}
+function setLogs(a,b,c){$("sonicLog").textContent=a;$("directorLog").textContent=b;$("readyLog").textContent=c}
+function applyScene(key){state.scene=key;let p=profiles[key];$("sceneName").textContent=p.label;qsa(".scene").forEach(b=>b.classList.toggle("on",b.dataset.scene===key));setLogs(hasSource?"音源解析準備OK":"音源待機中",p.label+"用の演出プロファイルを選択","LIVE STARTで会場に入れます");toast(p.label+" MODE")}
+qsa(".scene").forEach(b=>b.onclick=()=>applyScene(b.dataset.scene));
+function stopAll(show=true){osc.forEach(o=>{try{o.stop()}catch(e){}});osc=[];if(noise){try{noise.stop()}catch(e){}noise=null}clearInterval(beatTimer);audio.pause();live=false;if(show){$("status").textContent="STOPPED";setLogs("停止中","演出停止","LIVE STARTで再開できます");toast("STOPPED")}}
+function crowdNoise(){const len=ac.sampleRate*2,buf=ac.createBuffer(1,len,ac.sampleRate),arr=buf.getChannelData(0);for(let i=0;i<len;i++)arr[i]=(Math.random()*2-1)*.22*Math.sin(i*.003);noise=ac.createBufferSource();noise.buffer=buf;noise.loop=true;noiseGain=ac.createGain();noiseGain.gain.value=state.crowd/100*.16;noise.connect(noiseGain);noiseGain.connect(analyser);noise.start()}
+function kick(){let p=profiles[state.scene],o=ac.createOscillator(),g=ac.createGain(),now=ac.currentTime;o.type="sine";o.frequency.setValueAtTime(72*p.bass*state.boost,now);o.frequency.exponentialRampToValueAtTime(36,now+.18);g.gain.setValueAtTime(.001,now);g.gain.exponentialRampToValueAtTime(.48*p.bass*state.boost,now+.01);g.gain.exponentialRampToValueAtTime(.001,now+.30);o.connect(g);g.connect(analyser);o.start(now);o.stop(now+.32)}
+function startDemoEngine(){let p=profiles[state.scene];osc=[55,110,220,440].map((f,i)=>{let o=ac.createOscillator(),g=ac.createGain();o.type=i%2?"triangle":"sine";o.frequency.value=f;o.connect(g);g.gain.value=[.16,.08,.06,.035][i]*p.bass;g.connect(analyser);o.start();return o});}
+async function liveStart(){await init();await ac.resume();stopAll(false);$("overlay").classList.add("hide");$("status").textContent="LIVE READY";live=true;autoOn=true;start=performance.now();if(hasSource && !demoMode){await audio.play().catch(()=>{});if(!mediaSrc){mediaSrc=ac.createMediaElementSource(audio);mediaSrc.connect(analyser)}}else{startDemoEngine()}crowdNoise();beatTimer=setInterval(kick,520);setLogs("音源解析中：BASS / HIGH / ENERGY", "AUTO LIVE DIRECTORが演出生成中", "WELCOME TO GENESIS XR LIVE");toast("LIVE START")}
+async function soundTest(){await init();await ac.resume();let o=ac.createOscillator(),g=ac.createGain(),now=ac.currentTime;o.frequency.value=440;o.connect(g);g.connect(ac.destination);g.gain.value=0;g.gain.linearRampToValueAtTime(.18,now+.03);g.gain.linearRampToValueAtTime(0,now+.7);o.start(now);o.stop(now+.75);toast("SOUND TEST OK")}
+$("demoSource").onclick=()=>{hasSource=true;demoMode=true;setLogs("DEMO音源をセット", "AUTO LIVE DIRECTOR準備OK", "STEP 2で会場を選び、LIVE STARTを押してください");toast("DEMO SOURCE READY")};
+$("file").onchange=async e=>{let f=e.target.files[0];if(!f)return;await init();if(srcUrl)URL.revokeObjectURL(srcUrl);srcUrl=URL.createObjectURL(f);audio.src=srcUrl;hasSource=true;demoMode=false;if(!mediaSrc){mediaSrc=ac.createMediaElementSource(audio);mediaSrc.connect(analyser)}setLogs("音源読み込み完了："+f.name, "自動解析待機中", "STEP 2で会場を選び、LIVE STARTを押してください");toast("AUDIO LOADED")};
+$("liveStart").onclick=liveStart;$("auto").onclick=()=>{autoOn=!autoOn;$("auto").textContent=autoOn?"AUTO LIVE DIRECTOR ON":"AUTO LIVE DIRECTOR OFF";toast(autoOn?"AUTO DIRECTOR ON":"AUTO DIRECTOR OFF")};$("test").onclick=soundTest;$("stop").onclick=()=>stopAll(true);$("reset").onclick=()=>{stopAll(false);$("overlay").classList.remove("hide");$("status").textContent="READY";setLogs("音源待機中","演出生成待機中","STEP 1から開始してください");toast("RESET")};
+["sens","depth","crowdMix","master"].forEach(id=>$(id).oninput=()=>{state.sens=+$("sens").value;state.depth=+$("depth").value;state.crowd=+$("crowdMix").value;state.master=+$("master").value;$("sensV").textContent=state.sens;$("depthV").textContent=state.depth;$("crowdV").textContent=state.crowd;$("masterV").textContent=state.master;if(master)master.gain.value=state.master/100;if(noiseGain)noiseGain.gain.value=state.crowd/100*.16});
+function direct(energy,bass,high){if(!autoOn)return;let s=state.sens/100;if(energy>.54*s){state.cut="CHORUS PEAK";state.cam="AERIAL WIDE";state.light="FULL LASER";state.boost=1.25}else if(bass>.42*s){state.cut="BASS DROP";state.cam="STAGE SHAKE";state.light="FIRE / STROBE";state.boost=1.18}else if(high>.36*s){state.cut="VOCAL RISE";state.cam="SPOTLIGHT";state.light="SKY BEAM";state.boost=1.05}else if(energy<.22){state.cut="CINEMA QUIET";state.cam="SLOW PUSH";state.light="DARK BLUE";state.boost=.82}else{state.cut="LIVE GROOVE";state.cam="FRONT STAGE";state.light="BLUE BEAM";state.boost=1}if(state.cut!==lastCut){lastCut=state.cut;if(live)toast(state.cut)}$("cut").textContent=state.cut;$("cam").textContent=state.cam;$("lightText").textContent=state.light}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function draw(now=performance.now()){requestAnimationFrame(draw);let W=c.width,H=c.height,t=(now-start)/1000,p=profiles[state.scene];if(analyser){analyser.getByteFrequencyData(data);analyser.getByteTimeDomainData(wave)}else{for(let i=0;i<data.length;i++)data[i]=48+52*Math.abs(Math.sin(i*.2+t*2));for(let i=0;i<wave.length;i++)wave[i]=128+28*Math.sin(i*.08+t*3)}
+let bass=avg(data,0,24)/255,high=avg(data,76,125)/255,energy=avg(data)/255;direct(energy,bass,high);$("energy").textContent=Math.round(energy*100)+"%";$("bass").textContent=Math.round(bass*100)+"%";$("high").textContent=Math.round(high*100)+"%";$("imm").textContent=Math.min(99,Math.round(38+energy*40+state.depth*.18))+"%";if(panner)panner.pan.value=Math.sin(t*(.6+energy)*1.5)*(state.depth/100);
+let bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,"rgba(2,5,12,1)");bg.addColorStop(.55,"rgba(10,12,22,1)");bg.addColorStop(1,"#000");ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+let cx=W/2,stageY=H*.58,beamCount=state.scene==="expo"?12:state.scene==="headphone"?4:8,boost=state.boost;for(let i=0;i<beamCount;i++){let x=W*(i/(beamCount-1||1)),tx=cx+(i-beamCount/2)*42*Math.sin(t*.5+i+boost);ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(tx,stageY);ctx.strokeStyle="hsla("+((p.color+i*38+t*32)%360)+",100%,70%,"+(.07+energy*.22*p.laser*boost)+")";ctx.lineWidth=14+energy*24*p.laser*boost;ctx.stroke()}
+if(state.cut==="BASS DROP"||state.scene==="expo"||state.scene==="stadium"){for(let i=0;i<18*p.fire*boost;i++){let x=(i*67+t*16)%W,y=55+Math.sin(t+i)*18,r=2+Math.abs(Math.sin(t*2+i))*6*boost;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle="rgba(255,210,90,.32)";ctx.fill()}}
+ctx.fillStyle="rgba(255,255,255,.08)";let crowdN=state.scene==="headphone"?30:state.scene==="expo"?125:92;for(let i=0;i<crowdN;i++){let x=(i*47+t*18)%(W+80)-40,y=H*.72+(i%7)*18+Math.sin(t+i)*4,r=1.3+(i%5)*.55+energy*2.4;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
+ctx.fillStyle="rgba(0,0,0,.72)";rr(W*.16,stageY-24,W*.68,52,14);ctx.fill();ctx.strokeStyle="rgba(139,220,255,.45)";ctx.stroke();ctx.fillStyle="#f5f8ff";ctx.textAlign="center";ctx.font="900 21px system-ui";ctx.fillText(state.cut,cx,stageY+5);ctx.font="900 12px system-ui";ctx.fillStyle="rgba(245,248,255,.78)";ctx.fillText(profiles[state.scene].label+" / PUBLIC URL DEMO",cx,stageY+30);
+let ringR=72+state.depth*.55;ctx.beginPath();ctx.ellipse(cx,H*.33,ringR,32+state.depth*.25,0,0,Math.PI*2);ctx.strokeStyle="rgba(139,220,255,.25)";ctx.lineWidth=2;ctx.stroke();let ang=t*(.55+energy+boost*.2),dx=cx+Math.cos(ang)*ringR,dy=H*.33+Math.sin(ang)*(32+state.depth*.25);let g=ctx.createRadialGradient(dx,dy,2,dx,dy,25);g.addColorStop(0,"#fff");g.addColorStop(.35,"rgba(139,220,255,.95)");g.addColorStop(1,"rgba(139,220,255,0)");ctx.fillStyle=g;ctx.beginPath();ctx.arc(dx,dy,25,0,Math.PI*2);ctx.fill();
+let bars=state.scene==="expo"?34:28,bw=15,gap=7,total=bars*(bw+gap),sx=(W-total)/2,base=H-42,maxH=H*.33;for(let i=0;i<bars;i++){let idx=Math.floor(i/bars*data.length),amp=(data[idx]||0)/255,bh=18+amp*maxH*(.5+Math.abs(Math.sin(t*1.7+i*.3))*boost),x=sx+i*(bw+gap),y=base-bh,hue=(i/bars*360+t*22+p.color)%360,gr=ctx.createLinearGradient(x,y,x,base);gr.addColorStop(0,"hsla("+hue+",100%,72%,.98)");gr.addColorStop(1,"hsla("+hue+",85%,42%,.98)");ctx.fillStyle=gr;rr(x,y,bw,bh,5);ctx.fill();ctx.beginPath();ctx.moveTo(x+bw,y);ctx.lineTo(x+bw+8,y-5);ctx.lineTo(x+bw+8,base-5);ctx.lineTo(x+bw,base);ctx.closePath();ctx.fillStyle="hsla("+hue+",90%,26%,.75)";ctx.fill()}
+ctx.beginPath();for(let i=0;i<wave.length;i++){let x=i/(wave.length-1)*W,y=H-16+(wave[i]-128)*(.06+energy*.12);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.strokeStyle="rgba(245,248,255,.66)";ctx.lineWidth=2;ctx.stroke()}
+applyScene("stadium");draw();
+</script>
+
+<script id="genesis-app-shell-script">
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    const splash = document.getElementById("genesisSplash");
+    if (splash) splash.classList.add("hide");
+  }, 1150);
+  
+});
+</script>
+
+</body>
+</html>
